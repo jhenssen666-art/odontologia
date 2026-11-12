@@ -89,14 +89,83 @@
             </div>
         </section>
 
-        <section id="servicios">
+        <section id="servicios" class="seccion-servicios">
             <h2>Nuestros servicios</h2>
-            <p>Conoce los tratamientos y servicios odontológicos que ofrecemos.</p>
+            <p class="subtitulo">
+                Conoce las áreas de atención odontológica de nuestra clínica.
+            </p>
+
+            <div class="contenedor-servicios">
+
+                <article class="tarjeta-servicio">
+                    <img
+                        src="{{ url_for('static', filename='img/servicio-ortodoncia.jpg') }}"
+                        alt="Atención en ortodoncia">
+
+                    <div class="info-servicio">
+                        <h3>Ortodoncia y ortopedia dentofacial</h3>
+                        <p>
+                            Atención enfocada en la alineación dental,
+                            corrección de la mordida y desarrollo de
+                            las estructuras dentofaciales.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="tarjeta-servicio">
+                    <img
+                        src="{{ url_for('static', filename='img/servicio-patologia.jpg') }}"
+                        alt="Evaluación de patología oral">
+
+                    <div class="info-servicio">
+                        <h3>Patología oral y maxilofacial</h3>
+                        <p>
+                            Evaluación y diagnóstico de alteraciones
+                            y enfermedades que afectan la boca y
+                            las estructuras maxilofaciales.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="tarjeta-servicio">
+                    <img
+                        src="{{ url_for('static', filename='img/servicio-cirugia.jpg') }}"
+                        alt="Atención en cirugía oral y maxilofacial">
+
+                    <div class="info-servicio">
+                        <h3>Cirugía oral y maxilofacial</h3>
+                        <p>
+                            Atención especializada para procedimientos
+                            quirúrgicos relacionados con la boca,
+                            los maxilares y las estructuras faciales.
+                        </p>
+                    </div>
+                </article>
+
+            </div>
         </section>
 
-        <section id="contacto">
-            <h2>Contacto y ubicación</h2>
-            <p>Aquí nos podrás encontrar y contactarnos.</p>
+        <section id="contacto" class="seccion-ubicacion">
+            <div class="contenido-ubicacion">
+                <div class="texto-ubicacion">
+                    <h2>¿Dónde estamos?</h2>
+                    <p>
+                        Queremos estar cerca de ti.
+                        Conoce donde se  encuentra nuestra clínica
+                        y ven para que podamos cuidar  tu sonrisa.
+                    </p>
+                    <h2>Ubicación</h2>
+                    <p>
+                        a 15-167 Calle 13, #15-9
+                    <p>     
+                </div>
+
+                <div class="imagen-ubicacion">
+                    <img
+                        src="{{ url_for('static', filename='img/ubicacion.jpg') }}"
+                        alt="Ubicación de la clínica odontológica">
+                </div>
+            </div>
         </section>
     </main>
 

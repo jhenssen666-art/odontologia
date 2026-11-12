@@ -1381,3 +1381,133 @@ footer p {
         width: 100%;
     }
 }
+
+/* servicios */
+
+.seccion-servicios {
+    margin: 45px auto;
+    padding: 35px 25px;
+    background: #ffffff;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.seccion-servicios h2,
+.seccion-ubicacion h2 {
+    color: #243447;
+    margin-bottom: 12px;
+}
+
+.contenedor-servicios {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.tarjeta-servicio {
+    background: #f5f9fc;
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: left;
+    border: 1px solid #e2eaf0;
+}
+
+.tarjeta-servicio img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.info-servicio {
+    padding: 20px;
+}
+
+.info-servicio h3 {
+    color: #087e8b;
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.info-servicio p {
+    color: #536273;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+
+/* ubicacion */
+
+.seccion-ubicacion {
+    margin: 45px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 12px;
+}
+
+.contenido-ubicacion {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    align-items: center;
+    gap: 35px;
+}
+
+.texto-ubicacion p {
+    color: #536273;
+    line-height: 1.7;
+    margin-top: 15px;
+}
+
+.imagen-ubicacion img {
+    width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    display: block;
+    border-radius: 12px;
+}
+
+
+/*para pantallas pequeñas */
+
+@media (max-width: 850px) {
+    .contenedor-servicios {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .contenido-ubicacion {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 550px) {
+    .contenedor-servicios {
+        grid-template-columns: 1fr;
+    }
+
+    .seccion-servicios,
+    .seccion-ubicacion {
+        padding: 22px 16px;
+    }
+
+    .tarjeta-servicio img {
+        height: 190px;
+    }
+}
+
+
+.tarjeta-servicio img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    margin: 0 0 15px 0;
+    border-radius: 10px;
+}
+
+.imagen-ubicacion {
+    width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    margin: 15px 0;
+    border-radius: 10px;
+}
