@@ -1,46 +1,160 @@
 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitar cita</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <title>Solicitar cita - Clínica Odontológica</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/estilos.css') }}">
+
+    <style>
+        .seleccion-doctor {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .doctor-accion {
+            margin-top: 18px;
+        }
+
+        .boton-seleccionar-doctor {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px 12px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            background: #159b82;
+            border-radius: 9px;
+            font-weight: bold;
+            font-size: 15px;
+            transition: 0.25s;
+        }
+
+        .boton-seleccionar-doctor:hover {
+            background: #10745f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .mensaje-sin-doctores {
+            background: #eaf5f5;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            color: #164e59;
+        }
+
+        @media (max-width: 600px) {
+            .seleccion-doctor {
+                padding: 0 12px;
+            }
+        }
+    </style>
 </head>
+
 <body>
+
+    <header class="encabezado">
+        <h1>Clínica Odontológica</h1>
+
+        <nav>
+            <a href="{{ url_for('inicio') }}">Inicio</a>
+            <a href="{{ url_for('solicitar_cita') }}">Solicitar cita</a>
+            <a href="{{ url_for('mis_citas') }}">Mis citas</a>
+            <a href="/mis-notificaciones">Mis notificaciones</a>
+        </nav>
+
+        <div class="acciones-header">
+            <a class="boton-secundario" href="/logout">Cerrar sesión</a>
+        </div>
+    </header>
+
     <main>
-        <h1>Solicitar una cita odontológica</h1>
-        <p>Selecciona el doctor con quien deseas agendar tu cita.</p>
 
-        {% if doctores %}
-            <section>
-                {% for doctor in doctores %}
-                    <article>
-                        {% if doctor.foto %}
-                            <img
-                                src="{{ url_for('static', filename='img/' ~ doctor.foto) }}"
-                                alt="Foto de {{ doctor.nombre }} {{ doctor.apellido }}"
-                                width="150">
-                        {% endif %}
+        <section class="presentacion">
+            <h2>Solicita tu cita odontológica</h2>
 
-                        <h2>
-                            Dr./Dra. {{ doctor.nombre }} {{ doctor.apellido }}
-                        </h2>
+            <p>
+                Selecciona el profesional con quien deseas agendar
+                tu próxima cita. Consulta sus especialidades y
+                horarios disponibles.
+            </p>
+        </section>
 
-                        <p>Especialidad: {{ doctor.especialidad }}</p>
+        <section class="seccion-doctores seleccion-doctor">
 
-                        <a href="{{ url_for('ver_horarios_cita', id_doctor=doctor.id_doctor) }}">
-                            Ver horarios
-                        </a>
-                    </article>
-                {% endfor %}
-            </section>
-        {% else %}
-            <p>No hay doctores registrados todavía.</p>
-        {% endif %}
+            <h2>Selecciona tu doctor</h2>
 
-        <p><a href="{{ url_for('inicio') }}">Volver al inicio</a></p>
+            <p class="subtitulo">
+                Nuestro equipo está preparado para cuidar de tu sonrisa.
+            </p>
+
+            {% if doctores %}
+
+                <div class="contenedor-doctores">
+
+                    {% for doctor in doctores %}
+
+                        <article class="tarjeta-doctor">
+
+                            {% if doctor.foto %}
+                                <img
+                                    src="{{ url_for('static', filename='img/' ~ doctor.foto) }}"
+                                    alt="Foto de {{ doctor.nombre }} {{ doctor.apellido }}">
+                            {% endif %}
+
+                            <div class="info-doctor">
+
+                                <h3>
+                                    Dr./Dra. {{ doctor.nombre }} {{ doctor.apellido }}
+                                </h3>
+
+                                <p>
+                                    <strong>Especialidad:</strong>
+                                    {{ doctor.especialidad }}
+                                </p>
+
+                                <p>
+                                    <strong>Universidad:</strong>
+                                    Universidad de Cartagena
+                                </p>
+
+                                <div class="doctor-accion">
+                                    <a
+                                        class="boton-seleccionar-doctor"
+                                        href="{{ url_for('ver_horarios_cita', id_doctor=doctor.id_doctor) }}">
+                                        Seleccionar este doctor
+                                    </a>
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="mensaje-sin-doctores">
+                    No hay doctores registrados todavía.
+                </div>
+
+            {% endif %}
+
+        </section>
+
     </main>
+
+    <footer>
+        <p>&copy; 2026 Clínica Odontológica</p>
+    </footer>
+
 </body>
 </html>

@@ -4,76 +4,494 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horarios del doctor</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <title>Horarios del doctor - Clínica Odontológica</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/estilos.css') }}">
+
+    <style>
+        .contenedor-horarios {
+            max-width: 1050px;
+            margin: 45px auto;
+            padding: 0 20px;
+        }
+
+        .encabezado-horarios {
+            background: #eaf5f5;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .perfil-doctor {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 22px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .foto-doctor-horarios {
+            width: 115px;
+            height: 115px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+        }
+
+        .info-doctor-horarios {
+            text-align: left;
+        }
+
+        .info-doctor-horarios h2 {
+            margin: 0 0 8px;
+            color: #164e59;
+        }
+
+        .info-doctor-horarios p {
+            margin: 5px 0;
+            color: #526b70;
+        }
+
+        .encabezado-horarios > p {
+            color: #526b70;
+        }
+
+        .tarjeta-fecha {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.07);
+            margin-bottom: 30px;
+        }
+
+        .tarjeta-fecha h3 {
+            color: #164e59;
+            margin-top: 0;
+        }
+
+        .formulario-fecha {
+            display: flex;
+            align-items: end;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .campo-fecha {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .campo-fecha label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #294d53;
+        }
+
+        .campo-fecha input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #cbdada;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .boton-consultar {
+            background: #164e59;
+            color: white;
+            border: none;
+            padding: 13px 22px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .boton-consultar:hover {
+            background: #0d3942;
+        }
+
+        .seccion-horas {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.07);
+            margin-bottom: 25px;
+        }
+
+        .seccion-horas h3 {
+            color: #164e59;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .leyenda-horarios {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+            color: #526b70;
+            font-size: 14px;
+        }
+
+        .punto-disponible,
+        .punto-ocupado {
+            display: inline-block;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .punto-disponible {
+            background: #20a477;
+        }
+
+        .punto-ocupado {
+            background: #d65a5a;
+        }
+
+        .rejilla-horarios {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .tarjeta-hora {
+            border: 1px solid #cfe5df;
+            background: #f1faf7;
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .hora-texto {
+            color: #164e59;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .estado-disponible {
+            color: #16815e;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .boton-solicitar {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            background: #159b82;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .boton-solicitar:hover {
+            background: #10745f;
+            transform: translateY(-2px);
+        }
+
+        .rejilla-ocupados {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .tarjeta-ocupada {
+            background: #fff3f3;
+            border: 1px solid #f0d0d0;
+            border-radius: 10px;
+            padding: 15px;
+            color: #a34444;
+        }
+
+        .tarjeta-ocupada strong {
+            display: block;
+            margin-top: 5px;
+            font-size: 13px;
+        }
+
+        .mensaje-vacio {
+            background: #f4f7f7;
+            padding: 20px;
+            border-radius: 10px;
+            color: #526b70;
+            text-align: center;
+        }
+
+        .mensajes-flash {
+            background: #fff4df;
+            color: #805b19;
+            border-radius: 9px;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+        }
+
+        .volver-doctores {
+            display: inline-block;
+            margin: 10px 0 30px;
+            color: #164e59;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .volver-doctores:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .contenedor-horarios {
+                margin: 25px auto;
+                padding: 0 12px;
+            }
+
+            .encabezado-horarios,
+            .tarjeta-fecha,
+            .seccion-horas {
+                padding: 20px;
+            }
+
+            .perfil-doctor {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .info-doctor-horarios {
+                text-align: center;
+            }
+
+            .formulario-fecha {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .campo-fecha {
+                width: 100%;
+            }
+
+            .boton-consultar {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <main>
-        <h1>Horarios de {{ doctor.nombre }} {{ doctor.apellido }}</h1>
-        <p>Especialidad: {{ doctor.especialidad }}</p>
+
+    <header class="encabezado">
+        <h1>Clínica Odontológica</h1>
+
+        <nav>
+            <a href="{{ url_for('inicio') }}">Inicio</a>
+            <a href="{{ url_for('solicitar_cita') }}">Solicitar cita</a>
+            <a href="{{ url_for('mis_citas') }}">Mis citas</a>
+            <a href="/mis-notificaciones">Mis notificaciones</a>
+        </nav>
+
+        <div class="acciones-header">
+            <a class="boton-secundario" href="/logout">Cerrar sesión</a>
+        </div>
+    </header>
+
+    <main class="contenedor-horarios">
+
+        <section class="encabezado-horarios">
+
+            <div class="perfil-doctor">
+
+                {% if doctor.foto %}
+                    <img
+                        class="foto-doctor-horarios"
+                        src="{{ url_for('static', filename='img/' ~ doctor.foto) }}"
+                        alt="Foto de {{ doctor.nombre }} {{ doctor.apellido }}">
+                {% endif %}
+
+                <div class="info-doctor-horarios">
+
+                    <h2>Agenda tu cita odontológica</h2>
+
+                    <p>
+                        <strong>Doctor:</strong>
+                        {{ doctor.nombre }} {{ doctor.apellido }}
+                    </p>
+
+                    <p>
+                        <strong>Especialidad:</strong>
+                        {{ doctor.especialidad }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            <p>
+                Selecciona una fecha para consultar los horarios disponibles.
+            </p>
+
+        </section>
 
         {% with mensajes = get_flashed_messages(with_categories=true) %}
             {% for categoria, mensaje in mensajes %}
-                <p>{{ mensaje }}</p>
+                <div class="mensajes-flash">
+                    {{ mensaje }}
+                </div>
             {% endfor %}
         {% endwith %}
 
-        <form method="GET"
-              action="{{ url_for('ver_horarios_cita', id_doctor=doctor.id_doctor) }}">
-            <label for="fecha">Selecciona una fecha:</label>
-            <input
-                type="date"
-                id="fecha"
-                name="fecha"
-                min="{{ hoy }}"
-                value="{{ fecha_seleccionada }}"
-                required>
-            <button type="submit">Consultar horarios</button>
-        </form>
+        <section class="tarjeta-fecha">
+
+            <h3>Selecciona la fecha de tu cita</h3>
+
+            <form method="GET"
+                  action="{{ url_for('ver_horarios_cita', id_doctor=doctor.id_doctor) }}"
+                  class="formulario-fecha">
+
+                <div class="campo-fecha">
+                    <label for="fecha">Fecha de atención</label>
+
+                    <input
+                        type="date"
+                        id="fecha"
+                        name="fecha"
+                        min="{{ hoy }}"
+                        value="{{ fecha_seleccionada }}"
+                        required>
+                </div>
+
+                <button type="submit" class="boton-consultar">
+                    Consultar horarios
+                </button>
+
+            </form>
+
+        </section>
 
         {% if fecha_seleccionada %}
-            <h2>Horas disponibles</h2>
 
-            {% if horarios_disponibles %}
-                <ul>
-                    {% for horario in horarios_disponibles %}
-                        <li>
-                            {{ horario.inicio }} - {{ horario.fin }}
-                            <strong>Disponible</strong>
+            <section class="seccion-horas">
 
-                            <form method="GET"
-                                  action="{{ url_for('formulario_cita', id_doctor=doctor.id_doctor) }}">
-                                <input type="hidden" name="fecha"
-                                       value="{{ fecha_seleccionada }}">
-                                <input type="hidden" name="hora_inicio"
-                                       value="{{ horario.inicio }}">
-                                <input type="hidden" name="hora_fin"
-                                       value="{{ horario.fin }}">
-                                <button type="submit">Solicitar esta hora</button>
-                            </form>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No hay horarios disponibles para esa fecha.</p>
-            {% endif %}
+                <h3>Horarios disponibles</h3>
+
+                <div class="leyenda-horarios">
+                    <span>
+                        <span class="punto-disponible"></span>
+                        Disponible
+                    </span>
+
+                    <span>
+                        <span class="punto-ocupado"></span>
+                        Ocupado
+                    </span>
+                </div>
+
+                {% if horarios_disponibles %}
+
+                    <div class="rejilla-horarios">
+
+                        {% for horario in horarios_disponibles %}
+
+                            <article class="tarjeta-hora">
+
+                                <span class="hora-texto">
+                                    {{ horario.inicio }} - {{ horario.fin }}
+                                </span>
+
+                                <span class="estado-disponible">
+                                    ● Disponible
+                                </span>
+
+                                <form method="GET"
+                                      action="{{ url_for('formulario_cita', id_doctor=doctor.id_doctor) }}">
+
+                                    <input type="hidden"
+                                           name="fecha"
+                                           value="{{ fecha_seleccionada }}">
+
+                                    <input type="hidden"
+                                           name="hora_inicio"
+                                           value="{{ horario.inicio }}">
+
+                                    <input type="hidden"
+                                           name="hora_fin"
+                                           value="{{ horario.fin }}">
+
+                                    <button type="submit"
+                                            class="boton-solicitar">
+                                        Solicitar esta hora
+                                    </button>
+
+                                </form>
+
+                            </article>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="mensaje-vacio">
+                        No hay horarios disponibles para esta fecha.
+                        Puedes seleccionar otro día para consultar.
+                    </div>
+
+                {% endif %}
+
+            </section>
 
             {% if horarios_ocupados %}
-                <h2>Horas ocupadas</h2>
-                <ul>
-                    {% for horario in horarios_ocupados %}
-                        <li>
-                            {{ horario.inicio }} - {{ horario.fin }}
-                            <strong>Ocupado</strong>
-                        </li>
-                    {% endfor %}
-                </ul>
+
+                <section class="seccion-horas">
+
+                    <h3>Horarios ocupados</h3>
+
+                    <div class="rejilla-ocupados">
+
+                        {% for horario in horarios_ocupados %}
+
+                            <article class="tarjeta-ocupada">
+
+                                {{ horario.inicio }} - {{ horario.fin }}
+
+                                <strong>● No disponible</strong>
+
+                            </article>
+
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+
             {% endif %}
+
         {% endif %}
 
-        <p>
-            <a href="{{ url_for('solicitar_cita') }}">Volver a elegir doctor</a>
-        </p>
+        <a class="volver-doctores"
+           href="{{ url_for('solicitar_cita') }}">
+            ← Volver a elegir doctor
+        </a>
+
     </main>
+
+    <footer>
+        <p>&copy; 2026 Clínica Odontológica</p>
+    </footer>
+
 </body>
 </html>
