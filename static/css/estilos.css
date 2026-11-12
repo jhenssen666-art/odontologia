@@ -1511,3 +1511,194 @@ footer p {
     margin: 15px 0;
     border-radius: 10px;
 }
+/* mejoras visuales para los botones y la navegacion */
+
+.encabezado nav a,
+.encabezado-auth nav a {
+    color: var(--color-texto);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 11px;
+    border-radius: 7px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.encabezado nav a:hover,
+.encabezado-auth nav a:hover {
+    color: var(--color-principal);
+    background-color: var(--color-secundario);
+}
+
+/* botones principales y secundarios */
+
+.boton-principal,
+.boton-secundario {
+    display: inline-block;
+    padding: 11px 19px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s,
+                transform 0.2s, box-shadow 0.2s;
+}
+
+.boton-principal {
+    background-color: var(--color-principal);
+    color: white;
+    border: 1px solid var(--color-principal);
+    box-shadow: 0 3px 8px rgba(8, 126, 139, 0.18);
+}
+
+.boton-principal:hover {
+    background-color: var(--color-principal-oscuro);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(8, 126, 139, 0.22);
+}
+
+.boton-secundario {
+    background-color: white;
+    color: var(--color-principal);
+    border: 1px solid var(--color-principal);
+}
+
+.boton-secundario:hover {
+    background-color: var(--color-secundario);
+    color: var(--color-principal-oscuro);
+    transform: translateY(-2px);
+}
+
+/* separacion de botones de arriba */
+
+.acciones-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* inicio y registro */
+
+.pagina-autenticacion {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #eef7f9, #f4f8fb);
+}
+
+.encabezado-auth {
+    position: relative;
+    padding: 20px 7%;
+}
+
+.encabezado-auth nav {
+    gap: 10px;
+}
+
+.contenedor-auth {
+    width: 100%;
+    max-width: 540px;
+    min-height: 75vh;
+    margin: 0 auto;
+    padding: 35px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tarjeta-auth {
+    width: 100%;
+    padding: 38px;
+    background-color: white;
+    border: 1px solid var(--color-borde);
+    border-radius: 16px;
+    box-shadow: 0 8px 28px rgba(22, 59, 77, 0.09);
+}
+
+.tarjeta-auth h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 27px;
+}
+
+.texto-auth {
+    text-align: center;
+    color: #687987;
+    font-size: 14px;
+    margin: 0 0 25px;
+}
+
+.boton-formulario {
+    width: 100%;
+    padding: 13px;
+    margin-top: 15px;
+    font-size: 15px;
+    border-radius: 8px;
+}
+
+.texto-enlace-auth {
+    margin: 22px 0 0;
+    text-align: center;
+    color: #687987;
+    font-size: 14px;
+}
+
+.texto-enlace-auth a {
+    color: var(--color-principal);
+    font-weight: bold;
+}
+
+.texto-enlace-auth a:hover {
+    color: var(--color-principal-oscuro);
+    text-decoration: underline;
+}
+
+/* login y registro */
+
+.mensaje-auth {
+    padding: 11px 13px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.mensaje-auth.error {
+    background-color: #fde8e8;
+    color: #a52834;
+    border: 1px solid #f5c2c7;
+}
+
+.mensaje-auth.exito {
+    background-color: #e2f5e9;
+    color: #176b38;
+    border: 1px solid #badbcc;
+}
+
+/* ajustes para celulares */
+
+@media (max-width: 600px) {
+    .encabezado-auth {
+        padding: 18px 20px;
+    }
+
+    .encabezado-auth nav {
+        justify-content: center;
+    }
+
+    .acciones-header {
+        flex-wrap: wrap;
+    }
+
+    .acciones-header a {
+        min-width: 125px;
+    }
+
+    .tarjeta-auth {
+        padding: 27px 21px;
+    }
+
+    .tarjeta-auth h2 {
+        font-size: 23px;
+    }
+}

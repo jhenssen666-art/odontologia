@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -37,8 +36,8 @@
 
         <div class="acciones-header">
             {% if not session.get('id_usuario') %}
-                <a class="boton-secundario" href="{{ url_for('registro') }}">Registrarse</a>
                 <a class="boton-principal" href="{{ url_for('login') }}">Iniciar sesión</a>
+                <a class="boton-secundario" href="{{ url_for('registro') }}">Registrarse</a>
             {% else %}
                 <a class="boton-secundario" href="/logout">Cerrar sesión</a>
             {% endif %}
@@ -152,13 +151,14 @@
                     <h2>¿Dónde estamos?</h2>
                     <p>
                         Queremos estar cerca de ti.
-                        Conoce donde se  encuentra nuestra clínica
-                        y ven para que podamos cuidar  tu sonrisa.
+                        Conoce dónde se encuentra nuestra clínica
+                        y ven para que podamos cuidar tu sonrisa.
                     </p>
+
                     <h2>Ubicación</h2>
                     <p>
                         a 15-167 Calle 13, #15-9
-                    <p>     
+                    </p>
                 </div>
 
                 <div class="imagen-ubicacion">
