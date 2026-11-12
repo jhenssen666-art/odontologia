@@ -22,6 +22,7 @@
             <a href="#contacto">Contacto</a>
 
             {% if session.get('rol') == 'PACIENTE' %}
+                <a href="{{ url_for('solicitar_cita') }}">Solicitar cita</a>
                 <a href="{{ url_for('mis_citas') }}">Mis citas</a>
                 <a href="/mis-notificaciones">Mis notificaciones</a>
             {% elif session.get('rol') == 'DOCTOR' %}
