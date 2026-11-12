@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis citas - Clínica Odontológica</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body>
+
+    <header class="encabezado">
+        <h1>Clínica Odontológica</h1>
+
+        <nav>
+            <a href="{{ url_for('inicio') }}">Inicio</a>
+            <a href="{{ url_for('mis_citas') }}">Mis citas</a>
+            <a href="/mis-notificaciones">Mis notificaciones</a>
+        </nav>
+
+        <a class="boton-secundario" href="/logout">Cerrar sesión</a>
+    </header>
+
+    <main>
+
+        <section>
+            <h1>Mis citas</h1>
+            <p>
+                Consulta el estado y los detalles de tus citas odontológicas.
+            </p>
+        </section>
+
+        {% if citas %}
+
+            <div class="contenedor-mis-citas">
+
+                {% for cita in citas %}
+
+                    <article class="tarjeta-cita">
+
+                        <div class="encabezado-cita">
+                            <h2>
+                                Dr. {{ cita.nombre_doctor }}
+                                {{ cita.apellido_doctor }}
+                            </h2>
+
+                            <span class="estado-cita estado-{{ cita.estado|lower }}">
+                                {{ cita.estado.replace('_', ' ') }}
+                            </span>
+                        </div>
+
+                        <p>
+                            <strong>Especialidad:</strong>
+                            {{ cita.especialidad }}
+                        </p>
+
+                        <div class="detalles-cita">
+                            <p>
+                                <strong>Fecha:</strong>
+                                {{ cita.fecha }}
+                            </p>
+
+                            <p>
+                                <strong>Horario:</strong>
+                                {{ cita.hora_inicio }} - {{ cita.hora_fin }}
+                            </p>
+                        </div>
+
+                        <p>
+                            <strong>Motivo:</strong>
+                            {{ cita.motivo }}
+                        </p>
+
+                        {% if cita.estado == 'REPROGRAMACION_PROPUESTA' %}
+
+                            <div class="propuesta-cita">
+                                <h3>Nueva fecha propuesta</h3>
+
+                                <p>
+                                    <strong>Fecha:</strong>
+                                    {{ cita.fecha_propuesta }}
+                                </p>
+
+                                <p>
+                                    <strong>Horario:</strong>
+                                    {{ cita.hora_inicio_propuesta }}
+                                    -
+                                    {{ cita.hora_fin_propuesta }}
+                                </p>
+
+                                <p>
+                                    Revisa tus notificaciones para aceptar o rechazar esta propuesta.
+                                </p>
+
+                                <a href="/mis-notificaciones" class="boton-secundario">
+                                    Ver notificación
+                                </a>
+                            </div>
+
+                        {% endif %}
+
+                        {% if cita.puede_cancelar %}
+
+                            <form class="formulario-cancelacion"
+                                method="POST"
+                                action="{{ url_for('cancelar_cita_paciente', id_cita=cita.id_cita) }}"
+                                onsubmit="return confirm('¿Estás seguro de cancelar esta cita?');">
+
+                                <label for="motivo_cancelacion_{{ cita.id_cita }}">
+                                    Motivo de la cancelación:
+                                </label>
+
+                                <textarea
+                                    id="motivo_cancelacion_{{ cita.id_cita }}"
+                                    name="motivo_cancelacion"
+                                    placeholder="Explica por qué deseas cancelar la cita..."
+                                    required></textarea>
+
+                                <button type="submit" class="boton-cancelar">
+                                    Cancelar cita
+                                </button>
+                            </form>
+
+                        {% endif %}
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <section class="sin-citas">
+                <h2>No tienes citas registradas</h2>
+                <p>Cuando solicites una cita, aparecerá aquí.</p>
+
+                <a href="{{ url_for('inicio') }}" class="boton-principal">
+                    Buscar un doctor
+                </a>
+            </section>
+
+        {% endif %}
+
+        <div class="volver-inicio">
+            <a href="{{ url_for('inicio') }}">Volver al inicio</a>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Clínica Odontológica</p>
+    </footer>
+
+</body>
+</html>

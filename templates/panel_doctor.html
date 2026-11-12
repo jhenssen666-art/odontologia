@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del doctor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body class="pagina-panel-doctor">
+
+    <header class="encabezado-panel">
+        <div>
+            <h1>Panel del doctor</h1>
+            <p>Bienvenido, Dr. {{ doctor.nombre }} {{ doctor.apellido }}</p>
+        </div>
+        <a class="boton-secundario" href="{{ url_for('inicio') }}">Volver al inicio</a>
+    </header>
+
+    <main class="contenido-panel">
+
+        <!-- Perfil del doctor -->
+        <section class="perfil-panel">
+            <h2>Mi perfil profesional</h2>
+
+            <div class="datos-perfil">
+                {% if doctor.foto %}
+                    <img
+                        class="foto-doctor-panel"
+                        src="{{ url_for('static', filename='img/' ~ doctor.foto) }}"
+                        alt="Foto de {{ doctor.nombre }} {{ doctor.apellido }}"
+                    >
+                {% endif %}
+
+                <div class="informacion-doctor">
+                    <h3>{{ doctor.nombre }} {{ doctor.apellido }}</h3>
+                    <p><strong>Correo:</strong> {{ doctor.correo }}</p>
+                    <p><strong>Especialidad:</strong> {{ doctor.especialidad }}</p>
+                    <p><strong>Universidad:</strong> {{ doctor.universidad }}</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agenda del doctor -->
+        <section class="accesos-panel">
+            <h2>Mi agenda</h2>
+
+            <div class="contenedor-accesos">
+                <a class="enlace-panel" href="{{ url_for('horarios_doctor') }}">
+                    <span>Mi horario</span>
+                    <small>Configura y consulta tus horarios de atención.</small>
+                </a>
+
+                <a class="enlace-panel" href="{{ url_for('historial_citas') }}">
+                    <span>Historial de citas</span>
+                    <small>Consulta las citas que has archivado.</small>
+                </a>
+            </div>
+        </section>
+
+        <section class="bandeja-citas">
+            <h2>Mi bandeja de citas</h2>
+            <p class="descripcion-seccion">
+                Aquí puedes administrar las solicitudes y citas de tus pacientes.
+            </p>
+
+            {% if citas %}
+
+                <div class="contenedor-citas">
+                    {% for cita in citas %}
+
+                        <article class="tarjeta-cita">
+
+                            <div class="encabezado-cita">
+                                <div>
+                                    <h3>
+                                        {{ cita.nombre_paciente }}
+                                        {{ cita.apellido_paciente }}
+                                    </h3>
+                                    <span class="numero-cita">Cita #{{ cita.id_cita }}</span>
+                                </div>
+
+                                <span class="estado-cita estado-{{ cita.estado|lower }}">
+                                    {{ cita.estado.replace('_', ' ') }}
+                                </span>
+                            </div>
+
+                            <div class="datos-cita">
+                                <p>
+                                    <strong>Fecha:</strong>
+                                    {{ cita.fecha }}
+                                </p>
+
+                                <p>
+                                    <strong>Horario:</strong>
+                                    {{ cita.hora_inicio }} - {{ cita.hora_fin }}
+                                </p>
+
+                                <p>
+                                    <strong>Motivo:</strong>
+                                    {{ cita.motivo }}
+                                </p>
+
+                                <p>
+                                    <strong>Correo:</strong>
+                                    {{ cita.correo_paciente }}
+                                </p>
+                            </div>
+
+                            {% if cita.estado in ['PENDIENTE', 'CONFIRMADA', 'REPROGRAMACION_PROPUESTA'] %}
+
+                                <div class="acciones-cita">
+                                    <h4>Cancelar cita</h4>
+
+                                    <form method="POST"
+                                        action="{{ url_for('cancelar_cita_doctor', id_cita=cita.id_cita) }}"
+                                        onsubmit="return confirm('¿Estás seguro de cancelar esta cita?');">
+
+                                        <label for="motivo_cancelacion_{{ cita.id_cita }}">
+                                            Motivo de la cancelación:
+                                        </label>
+
+                                        <textarea
+                                            id="motivo_cancelacion_{{ cita.id_cita }}"
+                                            name="motivo_cancelacion"
+                                            placeholder="Explica por qué debes cancelar la cita..."
+                                            required></textarea>
+
+                                        <button type="submit" class="boton-peligro">
+                                            Cancelar cita
+                                        </button>
+                                    </form>
+                                </div>
+
+                            {% endif %}
+
+                            <!-- solicitudes pendientes -->
+                            {% if cita.estado == 'PENDIENTE' %}
+
+                                <div class="acciones-cita">
+                                    <h4>Administrar solicitud</h4>
+
+                                    <form method="POST"
+                                        action="{{ url_for('actualizar_estado_cita', id_cita=cita.id_cita) }}"
+                                        class="botones-en-linea">
+
+                                        <button type="submit"
+                                            name="estado"
+                                            value="CONFIRMADA"
+                                            class="boton-accion">
+                                            Confirmar cita
+                                        </button>
+
+                                        <button type="submit"
+                                            name="estado"
+                                            value="RECHAZADA"
+                                            class="boton-peligro">
+                                            Rechazar cita
+                                        </button>
+                                    </form>
+
+                                    <details class="detalles-reprogramacion">
+                                        <summary>Proponer otro horario</summary>
+
+                                        <form method="POST"
+                                            action="{{ url_for('proponer_reprogramacion', id_cita=cita.id_cita) }}">
+
+                                            <label for="fecha_propuesta_{{ cita.id_cita }}">
+                                                Nueva fecha:
+                                            </label>
+
+                                            <input
+                                                type="date"
+                                                id="fecha_propuesta_{{ cita.id_cita }}"
+                                                name="fecha_propuesta"
+                                                min="{{ hoy }}"
+                                                required
+                                            >
+
+                                            <label for="hora_inicio_propuesta_{{ cita.id_cita }}">
+                                                Hora de inicio:
+                                            </label>
+
+                                            <input
+                                                type="time"
+                                                id="hora_inicio_propuesta_{{ cita.id_cita }}"
+                                                name="hora_inicio_propuesta"
+                                                required
+                                            >
+
+                                            <label for="hora_fin_propuesta_{{ cita.id_cita }}">
+                                                Hora de finalización:
+                                            </label>
+
+                                            <input
+                                                type="time"
+                                                id="hora_fin_propuesta_{{ cita.id_cita }}"
+                                                name="hora_fin_propuesta"
+                                                required
+                                            >
+
+                                            <button type="submit" class="boton-accion">
+                                                Enviar propuesta
+                                            </button>
+                                        </form>
+                                    </details>
+                                </div>
+
+                            {% endif %}
+
+                            <!-- archivar las citas -->
+                            {% if cita.estado in ['CONFIRMADA', 'RECHAZADA', 'COMPLETADA', 'CANCELADA'] %}
+
+                                <div class="acciones-cita">
+                                    <form method="POST"
+                                        action="{{ url_for('archivar_cita', id_cita=cita.id_cita) }}">
+
+                                        <button type="submit" class="boton-secundario">
+                                            Archivar cita
+                                        </button>
+                                    </form>
+                                </div>
+
+                            {% endif %}
+
+                        </article>
+
+                    {% endfor %}
+                </div>
+
+            {% else %}
+                <p class="mensaje-vacio">
+                    No tienes citas pendientes ni citas registradas en tu bandeja.
+                </p>
+            {% endif %}
+        </section>
+
+        <!-- respuestas a las propuestas de reprogramación -->
+        <section class="seccion-respuestas">
+
+            <h2>Respuestas a propuestas de reprogramación</h2>
+
+            {% if respuestas_reprogramacion %}
+
+                <!-- eliminar todas las respuestas que ya fueron leídas -->
+                <form method="POST"
+                    action="{{ url_for('eliminar_notificaciones_doctor_leidas') }}"
+                    onsubmit="return confirm('¿Deseas eliminar todas las respuestas leídas? Esta acción no se puede deshacer.');">
+
+                    <button type="submit" class="boton-peligro">
+                        Eliminar todas las respuestas leídas
+                    </button>
+                </form>
+
+                <div class="contenedor-citas">
+                    {% for respuesta in respuestas_reprogramacion %}
+
+                        <article class="tarjeta-cita tarjeta-respuesta">
+
+                            <div class="encabezado-cita">
+                                <h3>
+                                    {{ respuesta.nombre_paciente }}
+                                    {{ respuesta.apellido_paciente }}
+                                </h3>
+
+                                {% if respuesta.leida %}
+                                    <span class="estado-cita estado-confirmada">Leída</span>
+                                {% else %}
+                                    <span class="estado-cita estado-pendiente">No leída</span>
+                                {% endif %}
+                            </div>
+
+                            <p>
+                                <strong>Cita:</strong>
+                                #{{ respuesta.id_cita }}
+                            </p>
+
+                            <p>{{ respuesta.mensaje }}</p>
+
+                            <p>
+                                <strong>Fecha de respuesta:</strong>
+                                {{ respuesta.fecha }}
+                            </p>
+
+                            <div class="acciones-cita">
+
+                                {% if not respuesta.leida %}
+
+                                    <!-- Marcar respuesta como leída -->
+                                    <form method="POST"
+                                        action="{{ url_for('marcar_notificacion_doctor_leida', id_notificacion=respuesta.id_notificacion) }}">
+
+                                        <button type="submit" class="boton-accion">
+                                            Marcar como leída
+                                        </button>
+                                    </form>
+
+                                {% else %}
+
+                                    <!-- Eliminar respuesta individual -->
+                                    <form method="POST"
+                                        action="{{ url_for('eliminar_notificacion_doctor', id_notificacion=respuesta.id_notificacion) }}"
+                                        onsubmit="return confirm('¿Deseas eliminar esta respuesta definitivamente?');">
+
+                                        <button type="submit" class="boton-peligro">
+                                            Eliminar respuesta
+                                        </button>
+                                    </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+                </div>
+
+            {% else %}
+
+                <p class="mensaje-vacio">
+                    No hay respuestas a propuestas de reprogramación.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+        <div class="salida-panel">
+            <a class="boton-secundario" href="{{ url_for('logout') }}">
+                Cerrar sesión
+            </a>
+        </div>
+
+    </main>
+
+</body>
+</html>

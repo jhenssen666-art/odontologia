@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horarios del doctor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+    <main>
+        <h1>Horarios de {{ doctor.nombre }} {{ doctor.apellido }}</h1>
+        <p>Especialidad: {{ doctor.especialidad }}</p>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensaje in mensajes %}
+                <p>{{ mensaje }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="GET"
+              action="{{ url_for('ver_horarios_cita', id_doctor=doctor.id_doctor) }}">
+            <label for="fecha">Selecciona una fecha:</label>
+            <input
+                type="date"
+                id="fecha"
+                name="fecha"
+                min="{{ hoy }}"
+                value="{{ fecha_seleccionada }}"
+                required>
+            <button type="submit">Consultar horarios</button>
+        </form>
+
+        {% if fecha_seleccionada %}
+            <h2>Horas disponibles</h2>
+
+            {% if horarios_disponibles %}
+                <ul>
+                    {% for horario in horarios_disponibles %}
+                        <li>
+                            {{ horario.inicio }} - {{ horario.fin }}
+                            <strong>Disponible</strong>
+
+                            <form method="GET"
+                                  action="{{ url_for('formulario_cita', id_doctor=doctor.id_doctor) }}">
+                                <input type="hidden" name="fecha"
+                                       value="{{ fecha_seleccionada }}">
+                                <input type="hidden" name="hora_inicio"
+                                       value="{{ horario.inicio }}">
+                                <input type="hidden" name="hora_fin"
+                                       value="{{ horario.fin }}">
+                                <button type="submit">Solicitar esta hora</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No hay horarios disponibles para esa fecha.</p>
+            {% endif %}
+
+            {% if horarios_ocupados %}
+                <h2>Horas ocupadas</h2>
+                <ul>
+                    {% for horario in horarios_ocupados %}
+                        <li>
+                            {{ horario.inicio }} - {{ horario.fin }}
+                            <strong>Ocupado</strong>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
+
+        <p>
+            <a href="{{ url_for('solicitar_cita') }}">Volver a elegir doctor</a>
+        </p>
+    </main>
+</body>
+</html>

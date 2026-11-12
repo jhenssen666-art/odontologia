@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de citas</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body>
+
+    <header class="encabezado">
+        <h1>Historial de citas</h1>
+
+        <a class="boton-secundario" href="{{ url_for('panel_doctor') }}">
+            Volver al panel
+        </a>
+    </header>
+
+    <main>
+
+        <section class="seccion-historial">
+
+            <div class="titulo-historial">
+                <h2>Citas archivadas</h2>
+                <p>
+                    Aquí puedes consultar las citas que has archivado y administrar su historial.
+                </p>
+            </div>
+
+            {% if citas_archivadas %}
+
+                <div class="contenedor-historial">
+
+                    {% for cita in citas_archivadas %}
+
+                        <article class="tarjeta-historial">
+
+                            <div class="encabezado-historial">
+
+                                <div>
+                                    <h3>
+                                        {{ cita.nombre_paciente }}
+                                        {{ cita.apellido_paciente }}
+                                    </h3>
+
+                                    <span class="numero-historial">
+                                        Cita #{{ cita.id_cita }}
+                                    </span>
+                                </div>
+
+                                <span class="estado-cita estado-{{ cita.estado|lower }}">
+                                    {{ cita.estado|replace('_', ' ') }}
+                                </span>
+
+                            </div>
+
+                            <div class="datos-historial">
+
+                                <p>
+                                    <strong>Fecha:</strong>
+                                    {{ cita.fecha }}
+                                </p>
+
+                                <p>
+                                    <strong>Horario:</strong>
+                                    {{ cita.hora_inicio }} - {{ cita.hora_fin }}
+                                </p>
+
+                                <p>
+                                    <strong>Motivo:</strong>
+                                    {{ cita.motivo }}
+                                </p>
+
+                                <p>
+                                    <strong>Correo del paciente:</strong>
+                                    {{ cita.correo_paciente }}
+                                </p>
+
+                            </div>
+
+                            <div class="acciones-historial">
+
+                                <form method="POST"
+                                      action="{{ url_for('desarchivar_cita', id_cita=cita.id_cita) }}">
+
+                                    <button type="submit" class="boton-principal">
+                                        Desarchivar cita
+                                    </button>
+
+                                </form>
+
+                                {% if cita.fecha < hoy %}
+
+                                    <form method="POST"
+                                          action="{{ url_for('eliminar_cita_definitivamente', id_cita=cita.id_cita) }}"
+                                          onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta cita definitivamente? Esta acción no se puede deshacer.');">
+
+                                        <button type="submit" class="boton-eliminar-horario">
+                                            Eliminar definitivamente
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="sin-notificaciones">
+                    <h3>No tienes citas archivadas</h3>
+                    <p>Cuando archives alguna cita, aparecerá aquí.</p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        <div class="volver-inicio">
+            <a href="{{ url_for('panel_doctor') }}">
+                Volver al panel del doctor
+            </a>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Clínica Odontológica</p>
+    </footer>
+
+</body>
+</html>

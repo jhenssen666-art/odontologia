@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis notificaciones</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body>
+
+    <header class="encabezado">
+        <h1>Mis notificaciones</h1>
+
+        <a class="boton-secundario" href="{{ url_for('inicio') }}">
+            Volver al inicio
+        </a>
+    </header>
+
+    <main>
+
+        <section class="seccion-notificaciones">
+
+            <div class="titulo-notificaciones">
+                <div>
+                    <h2>Centro de notificaciones</h2>
+                    <p>Consulta las novedades y respuestas relacionadas con tus citas.</p>
+                </div>
+
+                {% if notificaciones %}
+
+                    {% set hay_leidas = namespace(valor=false) %}
+
+                    {% for notificacion in notificaciones %}
+                        {% if notificacion.leida == 1 %}
+                            {% set hay_leidas.valor = true %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if hay_leidas.valor %}
+                        <form method="POST"
+                              action="{{ url_for('eliminar_notificaciones_leidas') }}"
+                              onsubmit="return confirm('¿Estás seguro de eliminar todas las notificaciones leídas?');">
+
+                            <button type="submit" class="boton-eliminar-horario">
+                                Eliminar todas las leídas
+                            </button>
+
+                        </form>
+                    {% endif %}
+
+                {% endif %}
+            </div>
+
+            {% if notificaciones %}
+
+                <div class="contenedor-notificaciones">
+
+                    {% for notificacion in notificaciones %}
+
+                        <article class="tarjeta-notificacion {% if notificacion.leida %}notificacion-leida{% else %}notificacion-nueva{% endif %}">
+
+                            <div class="encabezado-notificacion">
+
+                                <span class="estado-notificacion {% if notificacion.leida %}estado-leida{% else %}estado-nueva{% endif %}">
+                                    {{ "Leída" if notificacion.leida else "Nueva" }}
+                                </span>
+
+                                <span class="fecha-notificacion">
+                                    {{ notificacion.fecha }}
+                                </span>
+
+                            </div>
+
+                            <p class="mensaje-notificacion">
+                                {{ notificacion.mensaje }}
+                            </p>
+
+                            {% if notificacion.id_cita %}
+                                <p class="numero-cita-notificacion">
+                                    <strong>Solicitud de cita:</strong>
+                                    #{{ notificacion.id_cita }}
+                                </p>
+                            {% endif %}
+
+                            {% if notificacion.tipo == 'REPROGRAMACION_PROPUESTA' %}
+
+                                <div class="respuesta-reprogramacion">
+
+                                    <h3>Propuesta de reprogramación</h3>
+
+                                    <p>¿Aceptas el nuevo horario propuesto por el doctor?</p>
+
+                                    <form method="POST"
+                                          action="{{ url_for('responder_reprogramacion', id_cita=notificacion.id_cita) }}">
+
+                                        <div class="acciones-reprogramacion">
+
+                                            <button type="submit"
+                                                    name="decision"
+                                                    value="ACEPTAR"
+                                                    class="boton-principal">
+                                                Aceptar propuesta
+                                            </button>
+
+                                            <button type="submit"
+                                                    name="decision"
+                                                    value="RECHAZAR"
+                                                    class="boton-rechazar">
+                                                Rechazar propuesta
+                                            </button>
+
+                                        </div>
+
+                                    </form>
+
+                                </div>
+
+                            {% endif %}
+
+                            <div class="acciones-notificacion">
+
+                                {% if notificacion.leida == 0 %}
+
+                                    <form method="POST"
+                                          action="{{ url_for('marcar_notificacion_leida', id_notificacion=notificacion.id_notificacion) }}">
+
+                                        <button type="submit" class="boton-principal">
+                                            Marcar como leída
+                                        </button>
+
+                                    </form>
+
+                                {% else %}
+
+                                    <form method="POST"
+                                          action="{{ url_for('eliminar_notificacion', id_notificacion=notificacion.id_notificacion) }}"
+                                          onsubmit="return confirm('¿Eliminar esta notificación?');">
+
+                                        <button type="submit" class="boton-eliminar-horario">
+                                            Eliminar notificación
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="sin-notificaciones">
+                    <h3>No tienes notificaciones</h3>
+                    <p>Cuando recibas novedades sobre tus citas, aparecerán aquí.</p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        <div class="volver-inicio">
+            <a href="{{ url_for('inicio') }}">
+                Volver al inicio
+            </a>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Clínica Odontológica</p>
+    </footer>
+
+</body>
+</html>

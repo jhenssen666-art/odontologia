@@ -1,0 +1,46 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitar cita</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+    <main>
+        <h1>Solicitar una cita odontológica</h1>
+        <p>Selecciona el doctor con quien deseas agendar tu cita.</p>
+
+        {% if doctores %}
+            <section>
+                {% for doctor in doctores %}
+                    <article>
+                        {% if doctor.foto %}
+                            <img
+                                src="{{ url_for('static', filename='img/' ~ doctor.foto) }}"
+                                alt="Foto de {{ doctor.nombre }} {{ doctor.apellido }}"
+                                width="150">
+                        {% endif %}
+
+                        <h2>
+                            Dr./Dra. {{ doctor.nombre }} {{ doctor.apellido }}
+                        </h2>
+
+                        <p>Especialidad: {{ doctor.especialidad }}</p>
+
+                        <a href="{{ url_for('ver_horarios_cita', id_doctor=doctor.id_doctor) }}">
+                            Ver horarios
+                        </a>
+                    </article>
+                {% endfor %}
+            </section>
+        {% else %}
+            <p>No hay doctores registrados todavía.</p>
+        {% endif %}
+
+        <p><a href="{{ url_for('inicio') }}">Volver al inicio</a></p>
+    </main>
+</body>
+</html>

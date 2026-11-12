@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis horarios - Clínica Odontológica</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body>
+
+    <header class="encabezado">
+        <div>
+            <h1>Mis horarios</h1>
+            <p>Doctor: {{ doctor.nombre }} {{ doctor.apellido }}</p>
+        </div>
+
+        <a class="boton-secundario" href="{{ url_for('panel_doctor') }}">
+            Volver a mi panel
+        </a>
+    </header>
+
+    <main>
+
+        <!-- Configuración de horarios -->
+        <section class="seccion-horarios">
+            <h2>Agregar horario de atención</h2>
+            <p class="subtitulo-horarios">
+                Configura los días y las horas en las que atenderás pacientes.
+            </p>
+
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mensaje-auth {{ categoria }}">
+                        {{ mensaje }}
+                    </div>
+                {% endfor %}
+            {% endwith %}
+
+            <form method="POST" class="formulario-horarios">
+
+                <div class="campo-horario">
+                    <label for="dia_semana">Día de atención</label>
+                    <select id="dia_semana" name="dia_semana" required>
+                        <option value="">Selecciona un día</option>
+                        <option value="0">Lunes</option>
+                        <option value="1">Martes</option>
+                        <option value="2">Miércoles</option>
+                        <option value="3">Jueves</option>
+                        <option value="4">Viernes</option>
+                        <option value="5">Sábado</option>
+                    </select>
+                </div>
+
+                <div class="campo-horario">
+                    <label for="hora_inicio">Hora de inicio</label>
+                    <input type="time" id="hora_inicio" name="hora_inicio" required>
+                </div>
+
+                <div class="campo-horario">
+                    <label for="hora_fin">Hora de finalización</label>
+                    <input type="time" id="hora_fin" name="hora_fin" required>
+                </div>
+
+                <button type="submit" class="boton-principal">
+                    Guardar horario
+                </button>
+
+            </form>
+        </section>
+
+        <!-- Mi agenda diaria -->
+        <section class="seccion-horarios">
+
+            <h2>Consultar mi agenda diaria</h2>
+            <p class="subtitulo-horarios">
+                Consulta las horas disponibles y las citas que tienes programadas.
+            </p>
+
+            <form method="GET"
+                  action="{{ url_for('horarios_doctor') }}"
+                  class="formulario-consulta-agenda">
+
+                <div class="campo-horario">
+                    <label for="fecha">Selecciona una fecha</label>
+                    <input
+                        type="date"
+                        id="fecha"
+                        name="fecha"
+                        value="{{ fecha_consulta }}"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="boton-principal">
+                    Consultar agenda
+                </button>
+
+            </form>
+
+            <div class="titulo-agenda">
+                <h3>{{ nombre_dia }} - {{ fecha_consulta }}</h3>
+            </div>
+
+            {% if nombre_dia == 'Domingo' %}
+
+                <p class="mensaje-agenda">
+                    La clínica no atiende los domingos.
+                </p>
+
+            {% elif not agenda_dia %}
+
+                <p class="mensaje-agenda">
+                    No tienes horarios de atención registrados para este día.
+                </p>
+
+            {% else %}
+
+                <div class="referencia-agenda">
+                    <span class="referencia-disponible">● Disponible</span>
+                    <span class="referencia-ocupado">● Ocupado</span>
+                </div>
+
+                <div class="contenedor-agenda">
+
+                    {% for espacio in agenda_dia %}
+
+                        <article class="bloque-agenda {% if espacio.ocupado %}bloque-ocupado{% else %}bloque-disponible{% endif %}">
+
+                            <div class="encabezado-bloque-agenda">
+                                <h3>
+                                    {{ espacio.hora_inicio }} - {{ espacio.hora_fin }}
+                                </h3>
+
+                                {% if espacio.ocupado %}
+                                    <span class="etiqueta-ocupado">Ocupado</span>
+                                {% else %}
+                                    <span class="etiqueta-disponible">Disponible</span>
+                                {% endif %}
+                            </div>
+
+                            {% if espacio.ocupado %}
+
+                                {% for ocupacion in espacio.ocupaciones %}
+
+                                    <div class="detalle-ocupacion">
+
+                                        <p>
+                                            <strong>{{ ocupacion.tipo }}:</strong>
+                                            #{{ ocupacion.id_cita }}
+                                        </p>
+
+                                        <p>
+                                            <strong>Paciente:</strong>
+                                            {{ ocupacion.nombre_paciente }}
+                                            {{ ocupacion.apellido_paciente }}
+                                        </p>
+
+                                        <p>
+                                            <strong>Motivo:</strong>
+                                            {{ ocupacion.motivo }}
+                                        </p>
+
+                                        <p>
+                                            <strong>Estado:</strong>
+                                            {{ ocupacion.estado }}
+                                        </p>
+
+                                        <p>
+                                            <strong>Horario:</strong>
+                                            {{ ocupacion.hora_inicio }} -
+                                            {{ ocupacion.hora_fin }}
+                                        </p>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            {% else %}
+
+                                <p class="texto-disponible">
+                                    Disponible para citas.
+                                </p>
+
+                            {% endif %}
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        <!-- Horarios registrados -->
+        <section class="seccion-horarios">
+
+            <h2>Mis horarios registrados</h2>
+            <p class="subtitulo-horarios">
+                Consulta y modifica los horarios habituales de atención.
+            </p>
+
+            {% if horarios %}
+
+                <div class="tabla-horarios-contenedor">
+                    <table class="tabla-horarios">
+
+                        <thead>
+                            <tr>
+                                <th>Día</th>
+                                <th>Inicio</th>
+                                <th>Fin</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for horario in horarios %}
+
+                                <tr>
+                                    <td>
+                                        <select
+                                            name="dia_semana"
+                                            form="editar-horario-{{ horario.id_horario }}"
+                                            required
+                                        >
+                                            {% for numero, nombre_dia in dias.items() %}
+                                                <option
+                                                    value="{{ numero }}"
+                                                    {% if numero == horario.dia_semana %}selected{% endif %}
+                                                >
+                                                    {{ nombre_dia }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+
+                                    <td>
+                                        <input
+                                            type="time"
+                                            name="hora_inicio"
+                                            form="editar-horario-{{ horario.id_horario }}"
+                                            value="{{ horario.hora_inicio }}"
+                                            required
+                                        >
+                                    </td>
+
+                                    <td>
+                                        <input
+                                            type="time"
+                                            name="hora_fin"
+                                            form="editar-horario-{{ horario.id_horario }}"
+                                            value="{{ horario.hora_fin }}"
+                                            required
+                                        >
+                                    </td>
+
+                                    <td class="acciones-horario">
+
+                                        <form
+                                            id="editar-horario-{{ horario.id_horario }}"
+                                            method="POST"
+                                            action="{{ url_for('editar_horario', id_horario=horario.id_horario) }}"
+                                        >
+                                        </form>
+
+                                        <button
+                                            type="submit"
+                                            form="editar-horario-{{ horario.id_horario }}"
+                                            class="boton-guardar-horario"
+                                        >
+                                            Guardar
+                                        </button>
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for('eliminar_horario', id_horario=horario.id_horario) }}"
+                                            onsubmit="return confirm('¿Seguro que deseas eliminar este horario?');"
+                                        >
+                                            <button type="submit" class="boton-eliminar-horario">
+                                                Eliminar
+                                            </button>
+                                        </form>
+
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+
+            {% else %}
+
+                <p class="mensaje-agenda">
+                    Aún no has registrado horarios.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+        <div class="volver-inicio">
+            <a href="{{ url_for('panel_doctor') }}">Volver a mi panel</a>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Clínica Odontológica</p>
+    </footer>
+
+</body>
+</html>

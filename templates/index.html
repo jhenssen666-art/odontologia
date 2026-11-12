@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clínica Odontológica</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+
+<body>
+
+    <header class="encabezado">
+        <h1>Clínica Odontológica</h1>
+
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="#doctores">Doctores</a>
+            <a href="#servicios">Servicios</a>
+            <a href="#contacto">Contacto</a>
+
+            {% if session.get('rol') == 'PACIENTE' %}
+                <a href="{{ url_for('mis_citas') }}">Mis citas</a>
+                <a href="/mis-notificaciones">Mis notificaciones</a>
+            {% elif session.get('rol') == 'DOCTOR' %}
+                <a href="{{ url_for('panel_doctor') }}">Mi panel</a>
+                <a href="{{ url_for('horarios_doctor') }}">Mi horario</a>
+                <a href="{{ url_for('historial_citas') }}">Historial de citas</a>
+                <a href="{{ url_for('notificaciones_doctor') }}">Notificaciones</a>
+            {% elif session.get('rol') == 'ADMINISTRADOR' %}
+                <a href="/panel-admin">Administración</a>
+            {% endif %}
+        </nav>
+
+        <div class="acciones-header">
+            {% if not session.get('id_usuario') %}
+                <a class="boton-secundario" href="{{ url_for('registro') }}">Registrarse</a>
+                <a class="boton-principal" href="{{ url_for('login') }}">Iniciar sesión</a>
+            {% else %}
+                <a class="boton-secundario" href="/logout">Cerrar sesión</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        <section class="presentacion">
+            <h2>Tu sonrisa, nuestra prioridad</h2>
+            <p>
+                Bienvenido a nuestra clínica odontológica.
+                Estamos aquí para cuidar de tu salud bucal.
+            </p>
+        </section>
+
+        <section id="doctores" class="seccion-doctores">
+            <h2>Conoce nuestros doctores</h2>
+            <p class="subtitulo">
+                Profesionales comprometidos con el cuidado de tu sonrisa.
+            </p>
+
+            <div class="contenedor-doctores">
+                <article class="tarjeta-doctor">
+                    <img src="{{ url_for('static', filename='img/victor-manuel-gomez-almansa.png') }}" alt="Victor Manuel Gomez Almansa">
+                    <div class="info-doctor">
+                        <h3>Victor Manuel Gomez Almansa</h3>
+                        <p><strong>Universidad:</strong> Universidad de Cartagena</p>
+                        <p><strong>Especialidad:</strong> Ortodoncia y ortopedia dentofacial</p>
+                    </div>
+                </article>
+
+                <article class="tarjeta-doctor">
+                    <img src="{{ url_for('static', filename='img/ana-maria-garcia-velasquez.png') }}" alt="Ana Maria Garcia Velasquez">
+                    <div class="info-doctor">
+                        <h3>Ana Maria Garcia Velasquez</h3>
+                        <p><strong>Universidad:</strong> Universidad de Cartagena</p>
+                        <p><strong>Especialidad:</strong> Patología oral y maxilofacial</p>
+                    </div>
+                </article>
+
+                <article class="tarjeta-doctor">
+                    <img src="{{ url_for('static', filename='img/jose-antonio-ramos-zuniga.png') }}" alt="Jose Antonio Ramos Zuñiga">
+                    <div class="info-doctor">
+                        <h3>Jose Antonio Ramos Zuñiga</h3>
+                        <p><strong>Universidad:</strong> Universidad de Cartagena</p>
+                        <p><strong>Especialidad:</strong> Cirugía oral y maxilofacial</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="servicios">
+            <h2>Nuestros servicios</h2>
+            <p>Conoce los tratamientos y servicios odontológicos que ofrecemos.</p>
+        </section>
+
+        <section id="contacto">
+            <h2>Contacto y ubicación</h2>
+            <p>Aquí nos podrás encontrar y contactarnos.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Clínica Odontológica</p>
+    </footer>
+
+</body>
+</html>
